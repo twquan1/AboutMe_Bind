@@ -10,61 +10,53 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.example.aboutme.databinding.ActivityMainBinding
-
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private  val  myName: MyName = MyName("Teoh Wei Quan")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        binding.doneButton.setOnClickListener {
-            addNickname(it)
+        binding.myName = myName
+        binding.doneButton.setOnClickListener{
+            addNickname()
         }
 
-        binding.doneButton.setOnClickListener {
-            updateNickname(it)
+        binding.nicknameText.setOnClickListener {
+            updateNickName()
         }
     }
 
-    /**
-     * Click handler for the DONE button.
-     * Hides the EditText and the DONE button.
-     * Sets the EditText content to the TextView and displays it.
-     */
-    private fun addNickname(view: View) {
+    private fun addNickname() {
 
-        binding.nicknameText.text = binding.nicknameEdit.text
-        binding.nicknameEdit.visibility = View.GONE
-        binding.doneButton.visibility = View.GONE
-        binding.nicknameText.visibility = View.VISIBLE
+        binding.apply {
+            myName?.nickname = nicknameEdit.text.toString()
+            invalidateAll()
+            nicknameEdit.visibility = View.GONE
+            doneButton.visibility = View.GONE
+            nicknameText.visibility = View.VISIBLE
+        }
 
-        // Hide the keyboard.
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
 
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.doneButton.windowToken, 0)
     }
 
-    /**
-     * Click handler for the nickname TextView.
-     * Displays the EditText and the DONE button.
-     * Hides the nickname TextView.
-     */
-    private fun updateNickname(view: View) {
-        val editText = findViewById<EditText>(R.id.nickname_edit)
-        val doneButton = findViewById<Button>(R.id.done_button)
+    private fun updateNickName(){
 
-        editText.visibility = View.VISIBLE
-        doneButton.visibility = View.VISIBLE
-        view.visibility = View.GONE
+        binding.apply {
+            nicknameEdit.visibility = View.VISIBLE
+            doneButton.visibility = View.VISIBLE
+            nicknameText.visibility = View.GONE
+        }
 
-        // Set the focus to the edit text.
-        editText.requestFocus()
 
-        // Show the keyboard.
+        binding.nicknameEdit.requestFocus()
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(editText, 0)
+        imm.showSoftInput(binding.nicknameEdit, 0)
     }
 }
